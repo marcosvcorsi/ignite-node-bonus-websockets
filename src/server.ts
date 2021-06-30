@@ -1,18 +1,6 @@
-import express from 'express';
-import { join } from 'path';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-
-const app = express();
-
-app.use(express.static(join(__dirname, '..', 'public')));
-
-const server = createServer(app);
-const io = new Server(server);
-
-io.on('connection', (socket) => {
-  console.log(socket.id);
-})
+import { server } from "./http";
+import './socket';
+import './websocket/ChatService';
 
 const port = process.env.PORT || 3000;
 
