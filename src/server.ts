@@ -1,4 +1,9 @@
 import { server } from "./http";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+import './database';
 import './socket';
 import './websocket/ChatService';
 
