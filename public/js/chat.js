@@ -16,10 +16,6 @@ function onLoad() {
   
   `;
 
-  socket.on('chat_created', (data) => {
-    console.log('chat_created', data);
-  })
-
   socket.emit("start", {
     email,
     name,
