@@ -42,4 +42,23 @@ export class UsersRepository {
 
     return user;
   }
+
+  async findBySocketId(socketId: string): Promise<User> {
+    const user = await UserModel.findOne({
+      socketId
+    })
+
+    return user;
+  }
+
+  async findConnectedUsers(socketId: string): Promise<User[]> {
+    const users = await UserModel.find({
+      socketId: {
+        $ne: socketId,
+        $exists: true,
+      }
+    }).exec();
+
+    return users;
+  }
 }
