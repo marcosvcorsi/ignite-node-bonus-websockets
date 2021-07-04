@@ -3,7 +3,7 @@ import { UsersRepository } from "../repositories/UsersRepository";
 import { User } from "../schemas/User";
 
 @injectable()
-export class FindUserBySocketId {
+export class FindUserBySocketIdService {
   constructor (
     @inject('UsersRepository')
     private readonly usersRepository: UsersRepository

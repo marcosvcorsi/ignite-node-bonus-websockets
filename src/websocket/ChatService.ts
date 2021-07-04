@@ -2,8 +2,9 @@ import { container } from "tsyringe";
 import { CreateChatRoomService } from "../services/CreateChatRoomService";
 import { CreateUserService } from "../services/CreateUserService";
 import { DisconnectUserService } from "../services/DisconnectUserService";
-import { FindUserBySocketId } from "../services/FindUserBySocketId";
+import { FindUserBySocketIdService } from "../services/FindUserBySocketIdService";
 import { ListUsersService } from "../services/ListUsersService";
+import { SendMessageService } from "../services/SendMessageService";
 import { io } from "../socket";
 
 const handleChatStart = socket => {
@@ -59,9 +60,9 @@ const handleStartChat = socket => {
   return async (data, callback) => {
     console.log('HandleStartChat', data);    
 
-    const findUserBySocketId = container.resolve(FindUserBySocketId);
+    const findUserBySocketIdService = container.resolve(FindUserBySocketIdService);
     
-    const socketUser = await findUserBySocketId.execute(socket.id);
+    const socketUser = await findUserBySocketIdService.execute(socket.id);
 
     console.log('socketUser', socketUser);
 
@@ -76,7 +77,33 @@ const handleStartChat = socket => {
 
     console.log('chatRoom', chatRoom);
 
-    callback(chatRoom);
+    socket.join(String(chatRoom._id));
+
+    callback({ room: chatRoom, messages: [] });
+  }
+}
+
+const handleSendMessage = (socket) => {
+  return async (data) => {
+    console.log('HandleSendMessage', data);
+
+    const findUserBySocketIdService = container.resolve(FindUserBySocketIdService);
+    const user = await findUserBySocketIdService.execute(socket.id);
+
+    const sendMessageService = container.resolve(SendMessageService);
+
+    const { message: text, idChatRoom: chatRoom } = data;
+
+    const message = await sendMessageService.execute({
+      from: user._id,
+      text,
+      chatRoom
+    });
+
+    io.to(chatRoom).emit('message', {
+      message,
+      user
+    });
   }
 }
 
@@ -87,6 +114,7 @@ const handleConnect = socket => {
   socket.on('get_users', handleListConnectUsers(socket));
   socket.on('disconnect', handleDisconnect(socket));
   socket.on('start_chat', handleStartChat(socket));
+  socket.on('message', handleSendMessage(socket))
 }
 
 io.on('connect', handleConnect);
