@@ -10,8 +10,14 @@ export class CreateChatRoomService {
     private readonly chatRoomsRepository: ChatRoomsRepository
   ) {}
 
-  async execute(data: CreateChatRoomDto): Promise<ChatRoom> {
-    const chatRoom = await this.chatRoomsRepository.create(data);
+  async execute({ users }: CreateChatRoomDto): Promise<ChatRoom> {
+    const chatRoomAlreadyExists = await this.chatRoomsRepository.findByUsers(users);
+
+    if(chatRoomAlreadyExists) {
+      return chatRoomAlreadyExists;
+    }
+
+    const chatRoom = await this.chatRoomsRepository.create({ users });
 
     return chatRoom;
   }
