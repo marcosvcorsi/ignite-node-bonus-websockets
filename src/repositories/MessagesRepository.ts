@@ -9,4 +9,13 @@ export class MessagesRepository {
 
     return message;
   }
+
+  async findByChatRoom(chatRoom: string): Promise<Message[]> {
+    const messages = await MessageModel
+      .find({ chatRoom })
+      .populate("from")
+      .sort({ createdAt: 1 });
+
+    return messages;
+  }
 }

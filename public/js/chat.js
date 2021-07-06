@@ -41,7 +41,7 @@ function onLoad() {
   socket.on("message", (data) => {
     console.log(data);
 
-    if (data.message.roomId === idChatRoom) {
+    if (data.message.chatRoom === idChatRoom) {
       addMessage(data);
     }
   });
@@ -65,10 +65,6 @@ function addMessage(data) {
 
   divMessageUser.innerHTML += ` 
   <span class="user_name user_name_date">
-      <img
-        class="img_user"
-        src=${data.user.avatar}
-      />
       <strong> ${data.user.name} &nbsp; </strong>
       <span>  ${dayjs(data.message.created_at).format(
         "DD/MM/YYYY HH:mm"
@@ -124,7 +120,7 @@ document.getElementById("users_list").addEventListener("click", (e) => {
       response.messages.forEach((message) => {
         const data = {
           message,
-          user: message.to,
+          user: message.from,
         };
 
         addMessage(data);

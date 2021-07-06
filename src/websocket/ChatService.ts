@@ -3,6 +3,7 @@ import { CreateChatRoomService } from "../services/CreateChatRoomService";
 import { CreateUserService } from "../services/CreateUserService";
 import { DisconnectUserService } from "../services/DisconnectUserService";
 import { FindUserBySocketIdService } from "../services/FindUserBySocketIdService";
+import { ListMessagesByChatRoomService } from "../services/ListMessagesByChatRoomService";
 import { ListUsersService } from "../services/ListUsersService";
 import { SendMessageService } from "../services/SendMessageService";
 import { io } from "../socket";
@@ -79,7 +80,12 @@ const handleStartChat = socket => {
 
     socket.join(String(chatRoom._id));
 
-    callback({ room: chatRoom, messages: [] });
+    const listMessagesByChatRoomService = container.resolve(ListMessagesByChatRoomService);
+    const messages = await listMessagesByChatRoomService.execute(chatRoom._id);
+
+    console.log('messages', messages);
+
+    callback({ room: chatRoom, messages });
   }
 }
 

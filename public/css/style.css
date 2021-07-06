@@ -21,12 +21,12 @@
 }
 
 .messages {
-  padding: 10px;
+  padding: 5px;
 }
 
 .chat_message {
   display: flex;
-  padding: 5px 20px;
+  padding: 3px 18px;
 }
 
 .footer {
