@@ -2,6 +2,7 @@ import { container } from "tsyringe";
 import { CreateChatRoomService } from "../services/CreateChatRoomService";
 import { CreateUserService } from "../services/CreateUserService";
 import { DisconnectUserService } from "../services/DisconnectUserService";
+import { FindChatRoomByIdService } from "../services/FindChatRoomByIdService";
 import { FindUserBySocketIdService } from "../services/FindUserBySocketIdService";
 import { ListMessagesByChatRoomService } from "../services/ListMessagesByChatRoomService";
 import { ListUsersService } from "../services/ListUsersService";
@@ -109,6 +110,21 @@ const handleSendMessage = (socket) => {
     io.to(chatRoom).emit('message', {
       message,
       user
+    });
+
+    const findChatRoomByIdService = container.resolve(FindChatRoomByIdService);
+    const room = await findChatRoomByIdService.execute(chatRoom); 
+
+    console.log('room', room);
+
+    const to = room.users.find(item => String(item._id) !== String(user._id));
+
+    console.log('to', to);
+
+    io.to(to.socketId).emit('notification', {
+      newMessage: true,
+      chatRoom,
+      from: user,
     });
   }
 }

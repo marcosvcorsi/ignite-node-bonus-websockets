@@ -47,7 +47,7 @@ function onLoad() {
   });
 
   socket.on("notification", (data) => {
-    if (data.roomId !== idChatRoom) {
+    if (data.chatRoom !== idChatRoom) {
       const user = document.getElementById(`user_${data.from._id}`);
 
       user.insertAdjacentHTML(

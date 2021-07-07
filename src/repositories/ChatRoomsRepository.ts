@@ -22,4 +22,10 @@ export class ChatRoomsRepository {
 
     return chatRoom;
   }
+
+  async findById(id: string): Promise<ChatRoom> {
+    const chatRoom = await ChatRoomModel.findById(id).populate("users");
+    
+    return chatRoom;
+  }
 }
